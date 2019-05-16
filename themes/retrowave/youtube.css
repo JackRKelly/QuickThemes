@@ -306,5 +306,40 @@ div#title.style-scope.ytd-profile-column-user-info-renderer {
 div#subtitle.style-scope.ytd-profile-column-user-info-renderer {
 	color: #258EA6!important;
 	font-family: SF-AlienIntrudersSolid!important;
-	text-shadow: 2px 2px 5px #FFA1F1!important; 
+	text-shadow: 2px 2px 5px #FFA1F1!important;
+}
+
+paper-button#button.style-scope.ytd-button-renderer.style-text.size-default {
+	margin-left: 16px;
+}
+
+ytd-post-renderer.style-scope.yt-horizontal-list-renderer {
+	background-color: #258EA6!important;
+}
+
+ytd-video-renderer.style-scope.ytd-post-renderer {
+	background-color: #258EA6!important;
+}
+
+div.badge.badge-style-type-live-now.style-scope.ytd-badge-supported-renderer {
+	background-color: #258EA6!important;
+	border: none;
+}
+
+a.yt-simple-endpoint.style-scope.yt-formatted-string {
+	color: #FFA1F1!important;
+}
+
+yt-formatted-string#home-content-text.style-scope.ytd-post-renderer {
+		color: #FFA1F1!important;
+		font-family: VCROSDMono!important;
+		text-shadow: none!important;
+}
+
+yt-icon#icon.style-scope.ytd-shelf-renderer {
+	fill: #258EA6!important;
+}
+
+ytd-grid-playlist-renderer.style-scope.ytd-grid-renderer{
+	background-color: #258EA6!important;
 }
