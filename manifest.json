@@ -1,0 +1,14 @@
+{
+  "name": "QuickThemes",
+  "version": "1.0",
+  "description": "Apply themes with ease",
+  "manifest_version": 2,
+  "icons": { "16": "qt16.png",
+             "64": "qt64.png",
+            "128": "qt128.png" },
+  "content_scripts": [ {
+    "matches": ["https://open.spotify.com/*", "https://play.spotify.com/*"],
+    "js": ["quickthemes.js"],
+    "css" : ["css/retrowave.css"]
+  } ]
+}
