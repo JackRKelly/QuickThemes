@@ -1,27 +1,22 @@
-/*ONLOAD CHECK FOR SPOTIFY AND YOUTUBE*/
-window.addEventListener('load', function() {
-    chrome.storage.sync.get(['spotify', 'youtube'], function(themes) {
-      if (themes.youtube == undefined) {
-        chrome.storage.sync.set({'youtube': 'none'}, function(themes) {
-          console.log("youtube set");
-        });
-      } else {
-        console.log("Youtube theme already set in google chrome storage");
-      }
-      if (themes.spotify == undefined) {
-        chrome.storage.sync.set({'spotify': 'none'}, function(themes) {
-          console.log("spotify set");
-        });
-      } else {
-        console.log("Spotify theme already set in google chrome storage");
-      }
-    });
 
-});
-
+/*SCRIPT ONLOAD CHECK FOR UNDEFINED VALUES NOT FUNCTIONING
   chrome.storage.sync.get(['spotify', 'youtube'], function(themes) {
-    console.log(themes.youtube + " " + themes.spotify);
-  });
+    if (typeof themes.youtube === 'undefined') {
+      chrome.storage.sync.set({'youtube': 'none'}, function() {
+        console.log("youtube set" + themes.youtube);
+      });
+    } else {
+      console.log("Youtube theme already set in google chrome storage");
+    }
+    if (typeof themes.spotify === 'undefined') {
+      chrome.storage.sync.set({'spotify': 'none'}, function() {
+        console.log("spotify set" + themes.spotify);
+      });
+    } else {
+      console.log("Spotify theme already set in google chrome storage");
+    }
+  });*/
+
 
 function getPathFromUrl(url) {
   return url.split("?")[0];
@@ -30,17 +25,22 @@ function getPathFromUrl(url) {
 function addCss(styleSheet) {
   var head = document.head;
   var link = document.createElement("link");
-
   link.type = "text/css";
   link.rel = "stylesheet";
   link.href = styleSheet;
-
   head.appendChild(link);
 }
 
 /*THEMES*/
-const retrowaveYoutube = chrome.extension.getURL("themes/retrowave/youtube.css");
-const retrowaveSpotify = chrome.extension.getURL("themes/retrowave/spotify.css");
+const retrowave = {
+  youtube: chrome.extension.getURL("themes/retrowave/youtube.css"),
+  spotify: chrome.extension.getURL("themes/retrowave/spotify.css")
+};
+
+const amethyst = {
+  youtube: chrome.extension.getURL("themes/amethyst/youtube.css"),
+  spotify: chrome.extension.getURL("themes/amethyst/spotify.css")
+};
 
 const logStyles = [
     'background: linear-gradient(#FFA1F1, #258EA6)'
@@ -55,72 +55,71 @@ const logStyles = [
     , 'padding: 25px'
 ].join(';');
 
-
-
+/*YOUTUBE SPOTIFY LISTENER*/
 window.addEventListener('load', function() {
-      /*YOUTUBE SPOTIFY LOAD*/
-      if (document.URL == "https://www.youtube.com/") {
+      if (document.URL.indexOf("https://www.youtube.com/") > -1) {
           chrome.storage.sync.get(['youtube'], function(site) {
             if (site.youtube == 'retrowave') {
-              addCss(retrowaveYoutube);
-              console.log('%c QuickThemes Loaded. Enjoy!', logStyles);
+              addCss(retrowave.youtube);
+              console.log('%c Retrowave Theme Loaded. Enjoy!', logStyles);
             } else if (site.youtube == 'none') {
-              console.log('%c No Themes :O', logStyles);
+              console.log('%c None Themes Loaded.', logStyles);
+            } else if (site.youtube == 'amethyst') {
+              addCss(amethyst.youtube);
+              console.log('%c Amethyst Theme Loaded. Enjoy!', logStyles);
             }
+
           });
-      } else if (document.URL == "https://open.spotify.com/" || "https://play.spotify.com") {
+      } else if (document.URL.indexOf("https://open.spotify.com/" || "https://play.spotify.com") > -1) {
           chrome.storage.sync.get(['spotify'], function(site) {
-            if (site.spotify == 'retrowave') {
-              addCss(retrowaveSpotify);
-              console.log('%c QuickThemes Loaded. Enjoy!', logStyles);
-            } else if (site.spotify == 'none') {
-              console.log('%c No Themes :O', logStyles);
+            if (site.spotify == 'none') {
+              console.log('%c None Themes Loaded.', logStyles);
+            } else if (site.spotify == 'retrowave') {
+              addCss(retrowave.spotify);
+              console.log('%c Retrowave Theme Loaded. Enjoy!', logStyles);
+            } else if (site.spotify == 'amethyst') {
+              addCss(amethyst.spotify);
+              console.log('%c Amethyst Theme Loaded. Enjoy!', logStyles);
             }
           });
       }
-      /*POP UP HTML*/
-      let documentNoQuery = getPathFromUrl(document.URL);
+});
 
-      if (documentNoQuery == chrome.extension.getURL("popup.html")) {
-        var themeChange = document.getElementById("themeChange");
-        var youtubeThemeInput = document.getElementById("youtubeThemeInput");
-        var spotifyThemeInput = document.getElementById("spotifyThemeInput");
-        /*Sets to already set theme if set*/
-        chrome.storage.sync.get(['spotify', 'youtube'], function(items) {
-          spotifyThemeInput.value = items.spotify;
-          youtubeThemeInput.value = items.youtube;
-          console.log("Inputs set to already set values: " + items.spotify + items.youtube)
+/*POP UP LISTENER HTML*/
+window.addEventListener('load', function() {
+  let documentNoQuery = getPathFromUrl(document.URL);
+  if (documentNoQuery == chrome.extension.getURL("popup.html")) {
+    var themeChange = document.getElementById("themeChange");
+    var youtubeThemeInput = document.getElementById("youtubeThemeInput");
+    var spotifyThemeInput = document.getElementById("spotifyThemeInput");
+    /*Sets to already set theme if set*/
+    chrome.storage.sync.get(['spotify', 'youtube'], function(themes) {
+      spotifyThemeInput.value = themes.spotify;
+      youtubeThemeInput.value = themes.youtube;
+    });
+    console.log("Popup.html detected as current page");
+    themeChange.addEventListener('submit', function() {
+      if (youtubeThemeInput.value == "retrowave") {
+        chrome.storage.sync.set({'youtube': 'retrowave'}, function() {
         });
-        console.log("Popup.html detected as current page");
-
-        themeChange.addEventListener('submit', function() {
-
-          if (youtubeThemeInput.value == "retrowave") {
-            chrome.storage.sync.set({'youtube': 'retrowave'}, function(items) {
-              console.log("youtube set to theme retrowave on form submit");
-            });
-          } else if (youtubeThemeInput.value == 'none') {
-            chrome.storage.sync.set({'youtube': 'none'}, function(items) {
-              console.log("youtube set to theme none on form submit");
-            });
-          } else {
-            console.log("ERROR: Youtube theme isnt set to a theme");
-          }
-          if (spotifyThemeInput.value == "retrowave") {
-            chrome.storage.sync.set({'spotify': 'retrowave'}, function(items) {
-              console.log("spotify set to theme retrowave on form submit" + items.spotify);
-            });
-          } else if (spotifyThemeInput.value == "none") {
-            chrome.storage.sync.set({'spotify': 'none'}, function(items) {
-              console.log("spotify set to theme none on form submit" + items.spotify);
-            });
-          } else {
-            console.log("ERROR: Spotify theme isnt set to a theme");
-          }
+      } else if (youtubeThemeInput.value == 'none') {
+        chrome.storage.sync.set({'youtube': 'none'}, function() {
         });
-      } else {
-        console.log("Page not currently Popup.html");
-        console.log(document.URL);
-        console.log(chrome.extension.getURL("popup.html"));
+      } else if (youtubeThemeInput.value == 'amethyst') {
+        chrome.storage.sync.set({'youtube': 'amethyst'}, function() {
+        });
       }
+      if (spotifyThemeInput.value == "retrowave") {
+        chrome.storage.sync.set({'spotify': 'retrowave'}, function() {
+        });
+      } else if (spotifyThemeInput.value == "none") {
+        chrome.storage.sync.set({'spotify': 'none'}, function() {
+        });
+      } else if (spotifyThemeInput.value == 'amethyst') {
+        chrome.storage.sync.set({'spotify': 'amethyst'}, function() {
+        });
+      }
+    });
+  } else {
+  }
 });
